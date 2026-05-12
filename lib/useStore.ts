@@ -16,12 +16,12 @@ type StepOffState = {
 
 const createInitialPerformerData = (count: number) => {
   const data = new Float32Array(count * 3);
-  for (let index = 0; index < count; index += 1) {
-    const column = index % 20;
-    const row = Math.floor(index / 20);
-    data[index * 3] = column * 2 - 19;
-    data[index * 3 + 1] = 0.2;
-    data[index * 3 + 2] = row * 2 - 9;
+  for (let performerIndex = 0; performerIndex < count; performerIndex += 1) {
+    const column = performerIndex % 20;
+    const row = Math.floor(performerIndex / 20);
+    data[performerIndex * 3] = column * 2 - 19;
+    data[performerIndex * 3 + 1] = 0.2;
+    data[performerIndex * 3 + 2] = row * 2 - 9;
   }
   return data;
 };

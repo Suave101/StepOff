@@ -42,11 +42,11 @@ function PerformerEngine() {
     const dummy = new Object3D();
     const matrix = new Matrix4();
 
-    for (let marker = 0; marker < 25; marker += 1) {
-      dummy.position.set(marker * 3 - 36, 0, 18);
+    for (let markerIndex = 0; markerIndex < 25; markerIndex += 1) {
+      dummy.position.set(markerIndex * 3 - 36, 0, 18);
       dummy.updateMatrix();
       matrix.copy(dummy.matrix);
-      markerRef.current.setMatrixAt(marker, matrix);
+      markerRef.current.setMatrixAt(markerIndex, matrix);
     }
 
     markerRef.current.instanceMatrix.needsUpdate = true;

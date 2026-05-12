@@ -82,7 +82,7 @@ export const parseMidiToTempoMap = (midiBuffer: ArrayBuffer): TempoMap => {
             (bytes[dataStart] << 16) |
             (bytes[dataStart + 1] << 8) |
             bytes[dataStart + 2];
-          const bpm = Number((60000000 / microsecondsPerQuarter).toFixed(4));
+          const bpm = Math.round((60000000 / microsecondsPerQuarter) * 10000) / 10000;
 
           events.push({
             tick: trackTick,
