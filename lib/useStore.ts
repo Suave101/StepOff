@@ -1,5 +1,7 @@
 import { create } from "zustand";
 
+import { buildPerformerRoster, findSetIndexByTick, SHOW_SETS, type PerformerProfile } from "@/lib/show/showData";
+
 export const TICKS_PER_BEAT = 960;
 export const TARGET_FPS = 60;
 export const DEFAULT_PERFORMER_COUNT = 200;
@@ -9,8 +11,13 @@ type StepOffState = {
   currentTick: number;
   bpm: number;
   activeSet: number;
+  showSets: typeof SHOW_SETS;
+  selectedPerformerIndex: number | null;
+  performerRoster: PerformerProfile[];
+  maxTick: number;
   performerData: Float32Array;
   setTransportTick: (currentTick: number) => void;
+  selectPerformer: (performerIndex: number | null) => void;
   setBpm: (bpm: number) => void;
 };
 
@@ -30,12 +37,23 @@ export const useStepOffStore = create<StepOffState>((set) => ({
   currentTick: 0,
   bpm: 120,
   activeSet: 0,
+  showSets: SHOW_SETS,
+  selectedPerformerIndex: null,
+  performerRoster: buildPerformerRoster(DEFAULT_PERFORMER_COUNT),
+  maxTick:
+    SHOW_SETS.length > 0
+      ? SHOW_SETS[SHOW_SETS.length - 1].startTick + SHOW_SETS[SHOW_SETS.length - 1].lengthTicks
+      : SET_DURATION_TICKS,
   performerData: createInitialPerformerData(DEFAULT_PERFORMER_COUNT),
   setTransportTick: (currentTick) => {
+    const nextTick = Math.max(0, Math.floor(currentTick));
     set({
-      currentTick,
-      activeSet: Math.floor(currentTick / SET_DURATION_TICKS),
+      currentTick: nextTick,
+      activeSet: findSetIndexByTick(nextTick),
     });
+  },
+  selectPerformer: (selectedPerformerIndex) => {
+    set({ selectedPerformerIndex });
   },
   setBpm: (bpm) => {
     set({ bpm });

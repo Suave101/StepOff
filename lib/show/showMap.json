@@ -1,0 +1,13 @@
+{
+  "title": "StepOff Production",
+  "sets": [
+    { "id": "set-01", "name": "Opener Arc", "startTick": 0, "lengthTicks": 3840 },
+    { "id": "set-02", "name": "Block Collapse", "startTick": 3840, "lengthTicks": 3840 },
+    { "id": "set-03", "name": "Chevron Build", "startTick": 7680, "lengthTicks": 3840 },
+    { "id": "set-04", "name": "Cross Through", "startTick": 11520, "lengthTicks": 3840 },
+    { "id": "set-05", "name": "Company Front", "startTick": 15360, "lengthTicks": 3840 },
+    { "id": "set-06", "name": "Scatter Hit", "startTick": 19200, "lengthTicks": 3840 },
+    { "id": "set-07", "name": "Reform Ladder", "startTick": 23040, "lengthTicks": 3840 },
+    { "id": "set-08", "name": "Final Picture", "startTick": 26880, "lengthTicks": 3840 }
+  ]
+}

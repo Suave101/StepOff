@@ -1,19 +1,20 @@
 "use client";
 
-import { Instance, Instances, OrbitControls } from "@react-three/drei";
+import { Html, Instance, Instances, OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import { Matrix4, Object3D, type InstancedMesh } from "three";
 import * as Tone from "tone";
 
-import { DEFAULT_PERFORMER_COUNT, SET_DURATION_TICKS, useStepOffStore } from "@/lib/useStore";
-
-const interpolate = (start: number, end: number, progress: number) =>
-  start + (end - start) * progress;
+import { getPerformerPositionAtTick } from "@/lib/performerMotion";
+import { DEFAULT_PERFORMER_COUNT, useStepOffStore } from "@/lib/useStore";
 
 function PerformerEngine() {
   const performerData = useStepOffStore((state) => state.performerData);
   const currentTick = useStepOffStore((state) => state.currentTick);
+  const selectedPerformerIndex = useStepOffStore((state) => state.selectedPerformerIndex);
+  const performerRoster = useStepOffStore((state) => state.performerRoster);
+  const selectPerformer = useStepOffStore((state) => state.selectPerformer);
   const markerRef = useRef<InstancedMesh>(null);
 
   useFrame(() => {
@@ -28,27 +29,20 @@ function PerformerEngine() {
     }
   });
 
-  const interpolationProgress = useMemo(
-    () => (currentTick % SET_DURATION_TICKS) / SET_DURATION_TICKS,
-    [currentTick],
-  );
-
   const positions = useMemo(() => {
     return Array.from({ length: DEFAULT_PERFORMER_COUNT }, (_, index) => {
-      const baseX = performerData[index * 3];
-      const baseY = performerData[index * 3 + 1];
-      const baseZ = performerData[index * 3 + 2];
-
-      const targetX = baseX + (index % 2 === 0 ? 1.2 : -1.2);
-      const targetZ = baseZ + 1;
-
-      return [
-        interpolate(baseX, targetX, interpolationProgress),
-        baseY,
-        interpolate(baseZ, targetZ, interpolationProgress),
-      ] as [number, number, number];
+      return getPerformerPositionAtTick(performerData, index, currentTick);
     });
-  }, [interpolationProgress, performerData]);
+  }, [currentTick, performerData]);
+
+  const selectedPosition = useMemo(() => {
+    if (selectedPerformerIndex === null) {
+      return null;
+    }
+    return positions[selectedPerformerIndex] ?? null;
+  }, [positions, selectedPerformerIndex]);
+
+  const selectedPerformer = selectedPerformerIndex === null ? null : performerRoster[selectedPerformerIndex];
 
   useEffect(() => {
     if (!markerRef.current) {
@@ -74,7 +68,15 @@ function PerformerEngine() {
         <sphereGeometry args={[0.32, 10, 10]} />
         <meshStandardMaterial color="#f97316" roughness={0.35} metalness={0.6} />
         {positions.map((position, index) => (
-          <Instance key={index} position={position} />
+          <Instance
+            key={index}
+            position={position}
+            color={selectedPerformerIndex === index ? "#22d3ee" : "#f97316"}
+            onClick={(event) => {
+              event.stopPropagation();
+              selectPerformer(index);
+            }}
+          />
         ))}
       </Instances>
 
@@ -82,14 +84,31 @@ function PerformerEngine() {
         <boxGeometry args={[1, 0.04, 1]} />
         <meshStandardMaterial color="#334155" />
       </instancedMesh>
+
+      {selectedPosition && selectedPerformer && (
+        <Html
+          position={[selectedPosition[0], selectedPosition[1] + 1.05, selectedPosition[2]]}
+          center
+          distanceFactor={24}
+        >
+          <div className="badge badge-info badge-sm border-none">{selectedPerformer.id}</div>
+        </Html>
+      )}
     </>
   );
 }
 
 export default function FieldCanvas() {
+  const selectPerformer = useStepOffStore((state) => state.selectPerformer);
+
   return (
     <div className="h-[55vh] w-full rounded-box border border-base-300 bg-base-200">
-      <Canvas camera={{ position: [0, 22, 38], fov: 48 }}>
+      <Canvas
+        camera={{ position: [0, 22, 38], fov: 48 }}
+        onPointerMissed={() => {
+          selectPerformer(null);
+        }}
+      >
         <color attach="background" args={["#0f172a"]} />
         <ambientLight intensity={0.4} />
         <directionalLight position={[18, 24, 10]} intensity={1.1} />

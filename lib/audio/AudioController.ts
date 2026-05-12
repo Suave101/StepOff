@@ -3,7 +3,7 @@
 import * as Tone from "tone";
 
 import type { TempoMap } from "@/lib/audio/MidiParser";
-import { useStepOffStore } from "@/lib/useStore";
+import { TICKS_PER_BEAT, useStepOffStore } from "@/lib/useStore";
 
 class AudioController {
   private beatEventId: number | null = null;
@@ -34,6 +34,14 @@ class AudioController {
     useStepOffStore.getState().setBpm(bpm);
   }
 
+  seekToTick(nextTick: number) {
+    const tick = Math.max(0, Math.floor(nextTick));
+    const bpm = useStepOffStore.getState().bpm;
+    const secondsPerTick = 60 / (bpm * TICKS_PER_BEAT);
+    Tone.Transport.seconds = tick * secondsPerTick;
+    useStepOffStore.getState().setTransportTick(tick);
+  }
+
   loadTempoMap(tempoMap: TempoMap) {
     this.tempoEventIds.forEach((eventId) => Tone.Transport.clear(eventId));
     this.tempoEventIds = [];
@@ -60,8 +68,7 @@ class AudioController {
 
   stop() {
     Tone.Transport.stop();
-    Tone.Transport.seconds = 0;
-    useStepOffStore.getState().setTransportTick(0);
+    this.seekToTick(0);
   }
 
   dispose() {
