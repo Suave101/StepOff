@@ -124,7 +124,7 @@ export const parseMidiToTempoMap = (midiBuffer: ArrayBuffer): TempoMap => {
   events.sort((a, b) => a.tick - b.tick);
 
   return {
-    ppq: ppq || 960,
+    ppq: ppq ?? 960,
     events,
   };
 };

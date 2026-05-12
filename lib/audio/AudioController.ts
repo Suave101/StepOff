@@ -21,7 +21,7 @@ class AudioController {
     this.beatEventId = Tone.Transport.scheduleRepeat((time) => {
       const beats = Math.floor(Tone.Transport.getTicksAtTime(time) / Tone.Transport.PPQ);
       if (process.env.NODE_ENV !== "production") {
-        console.log(`[StepOff] Beat ${beats + 1}`);
+        console.log(`[StepOff] Display Beat ${beats + 1} (internal ${beats})`);
       }
     }, "4n");
 

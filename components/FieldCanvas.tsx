@@ -21,7 +21,7 @@ function PerformerEngine() {
       return;
     }
 
-    const transportTick = Math.floor(Tone.Transport.ticks);
+    const transportTick = Tone.Transport.ticks;
     const state = useStepOffStore.getState();
     if (transportTick !== state.currentTick) {
       state.setTransportTick(transportTick);
