@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background: #111827;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
