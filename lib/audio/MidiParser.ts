@@ -9,6 +9,8 @@ export type TempoMap = {
   events: TempoMapEvent[];
 };
 
+const textDecoder = new TextDecoder();
+
 const readVariableLength = (bytes: Uint8Array, offset: number) => {
   let value = 0;
   let index = offset;
@@ -26,7 +28,7 @@ const readVariableLength = (bytes: Uint8Array, offset: number) => {
 export const parseMidiToTempoMap = (midiBuffer: ArrayBuffer): TempoMap => {
   const bytes = new Uint8Array(midiBuffer);
 
-  if (bytes.length < 14 || new TextDecoder().decode(bytes.slice(0, 4)) !== "MThd") {
+  if (bytes.length < 14 || textDecoder.decode(bytes.slice(0, 4)) !== "MThd") {
     return {
       ppq: 960,
       events: [{ tick: 0, bpm: 120, timeSignature: [4, 4] }],
@@ -40,7 +42,7 @@ export const parseMidiToTempoMap = (midiBuffer: ArrayBuffer): TempoMap => {
   let offset = 14;
 
   while (offset + 8 <= bytes.length) {
-    const chunkType = new TextDecoder().decode(bytes.slice(offset, offset + 4));
+    const chunkType = textDecoder.decode(bytes.slice(offset, offset + 4));
     const chunkLength =
       (bytes[offset + 4] << 24) |
       (bytes[offset + 5] << 16) |

@@ -1,9 +1,10 @@
 "use client";
 
 import { Instance, Instances, OrbitControls } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import { Matrix4, Object3D, type InstancedMesh } from "three";
+import * as Tone from "tone";
 
 import { DEFAULT_PERFORMER_COUNT, SET_DURATION_TICKS, useStepOffStore } from "@/lib/useStore";
 
@@ -15,7 +16,22 @@ function PerformerEngine() {
   const currentTick = useStepOffStore((state) => state.currentTick);
   const markerRef = useRef<InstancedMesh>(null);
 
-  const interpolationProgress = (currentTick % SET_DURATION_TICKS) / SET_DURATION_TICKS;
+  useFrame(() => {
+    if (Tone.Transport.state !== "started") {
+      return;
+    }
+
+    const transportTick = Math.floor(Tone.Transport.ticks);
+    const state = useStepOffStore.getState();
+    if (transportTick !== state.currentTick) {
+      state.setTransportTick(transportTick);
+    }
+  });
+
+  const interpolationProgress = useMemo(
+    () => (currentTick % SET_DURATION_TICKS) / SET_DURATION_TICKS,
+    [currentTick],
+  );
 
   const positions = useMemo(() => {
     return Array.from({ length: DEFAULT_PERFORMER_COUNT }, (_, index) => {
