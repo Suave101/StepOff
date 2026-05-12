@@ -28,8 +28,8 @@ class AudioController {
     }, "4n");
 
     this.frameEventId = Tone.Transport.scheduleRepeat((time) => {
-      const audioSeconds = Tone.Transport.getSecondsAtTime(time);
-      useStepOffStore.getState().updateFromAudioClock(audioSeconds);
+      const currentTick = Math.floor(Tone.Transport.getTicksAtTime(time));
+      useStepOffStore.getState().setTransportTick(currentTick);
     }, 1 / TARGET_FPS);
 
     this.initialized = true;
@@ -68,7 +68,7 @@ class AudioController {
   stop() {
     Tone.Transport.stop();
     Tone.Transport.seconds = 0;
-    useStepOffStore.getState().updateFromAudioClock(0);
+    useStepOffStore.getState().setTransportTick(0);
   }
 
   dispose() {

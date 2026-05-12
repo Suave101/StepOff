@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 
 import { audioController } from "@/lib/audio/AudioController";
-import { useStepOffStore } from "@/lib/useStore";
+import { TICKS_PER_BEAT, useStepOffStore } from "@/lib/useStore";
 
 const FieldCanvas = dynamic(() => import("@/components/FieldCanvas"), {
   ssr: false,
@@ -16,7 +16,7 @@ export default function StepOffDashboard() {
   const currentTick = useStepOffStore((state) => state.currentTick);
   const activeSet = useStepOffStore((state) => state.activeSet);
 
-  const beat = useMemo(() => Math.floor(currentTick / 960) + 1, [currentTick]);
+  const beat = useMemo(() => Math.floor(currentTick / TICKS_PER_BEAT) + 1, [currentTick]);
 
   return (
     <div className="min-h-screen bg-base-300 text-base-content">

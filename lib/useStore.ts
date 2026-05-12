@@ -10,7 +10,7 @@ type StepOffState = {
   bpm: number;
   activeSet: number;
   performerData: Float32Array;
-  updateFromAudioClock: (audioSeconds: number) => void;
+  setTransportTick: (currentTick: number) => void;
   setBpm: (bpm: number) => void;
 };
 
@@ -26,15 +26,12 @@ const createInitialPerformerData = (count: number) => {
   return data;
 };
 
-export const useStepOffStore = create<StepOffState>((set, get) => ({
+export const useStepOffStore = create<StepOffState>((set) => ({
   currentTick: 0,
   bpm: 120,
   activeSet: 0,
   performerData: createInitialPerformerData(DEFAULT_PERFORMER_COUNT),
-  updateFromAudioClock: (audioSeconds) => {
-    const { bpm } = get();
-    const ticksPerSecond = (bpm / 60) * TICKS_PER_BEAT;
-    const currentTick = Math.floor(audioSeconds * ticksPerSecond);
+  setTransportTick: (currentTick) => {
     set({
       currentTick,
       activeSet: Math.floor(currentTick / SET_DURATION_TICKS),
