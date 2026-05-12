@@ -3,7 +3,7 @@ import { create } from "zustand";
 export const TICKS_PER_BEAT = 960;
 export const TARGET_FPS = 60;
 export const DEFAULT_PERFORMER_COUNT = 200;
-const SET_DURATION_TICKS = TICKS_PER_BEAT * 4;
+export const SET_DURATION_TICKS = TICKS_PER_BEAT * 4;
 
 type StepOffState = {
   currentTick: number;

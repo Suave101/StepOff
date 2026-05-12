@@ -5,9 +5,7 @@ import { Canvas } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import { Matrix4, Object3D, type InstancedMesh } from "three";
 
-import { DEFAULT_PERFORMER_COUNT, TICKS_PER_BEAT, useStepOffStore } from "@/lib/useStore";
-
-const SET_DURATION_TICKS = TICKS_PER_BEAT * 4;
+import { DEFAULT_PERFORMER_COUNT, SET_DURATION_TICKS, useStepOffStore } from "@/lib/useStore";
 
 const interpolate = (start: number, end: number, progress: number) =>
   start + (end - start) * progress;
