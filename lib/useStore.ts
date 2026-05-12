@@ -13,11 +13,12 @@ type StepOffState = {
   activeSet: number;
   showSets: typeof SHOW_SETS;
   selectedPerformerIndex: number | null;
+  selectedPerformerId: string | null;
   performerRoster: PerformerProfile[];
   maxTick: number;
   performerData: Float32Array;
   setTransportTick: (currentTick: number) => void;
-  selectPerformer: (performerIndex: number | null) => void;
+  selectPerformer: (performerIndex: number | null, performerId?: string | null) => void;
   setBpm: (bpm: number) => void;
 };
 
@@ -39,6 +40,7 @@ export const useStepOffStore = create<StepOffState>((set) => ({
   activeSet: 0,
   showSets: SHOW_SETS,
   selectedPerformerIndex: null,
+  selectedPerformerId: null,
   performerRoster: buildPerformerRoster(DEFAULT_PERFORMER_COUNT),
   maxTick:
     SHOW_SETS.length > 0
@@ -52,8 +54,8 @@ export const useStepOffStore = create<StepOffState>((set) => ({
       activeSet: findSetIndexByTick(nextTick),
     });
   },
-  selectPerformer: (selectedPerformerIndex) => {
-    set({ selectedPerformerIndex });
+  selectPerformer: (selectedPerformerIndex, selectedPerformerId = null) => {
+    set({ selectedPerformerIndex, selectedPerformerId });
   },
   setBpm: (bpm) => {
     set({ bpm });
