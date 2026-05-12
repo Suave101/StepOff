@@ -22,7 +22,9 @@ class AudioController {
     Tone.Transport.bpm.value = useStepOffStore.getState().bpm;
     this.beatEventId = Tone.Transport.scheduleRepeat((time) => {
       const beats = Math.floor(Tone.Transport.getTicksAtTime(time) / Tone.Transport.PPQ);
-      console.log(`[StepOff] Beat ${beats + 1}`);
+      if (process.env.NODE_ENV !== "production") {
+        console.log(`[StepOff] Beat ${beats + 1}`);
+      }
     }, "4n");
 
     this.frameEventId = Tone.Transport.scheduleRepeat((time) => {
