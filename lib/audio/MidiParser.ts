@@ -95,9 +95,10 @@ export const parseMidiToTempoMap = (midiBuffer: ArrayBuffer): TempoMap => {
           const numerator = bytes[dataStart];
           const denominator = 2 ** bytes[dataStart + 1];
           currentTimeSignature = [numerator, denominator];
+          const latestBpm = events[events.length - 1]?.bpm ?? 120;
           events.push({
             tick: trackTick,
-            bpm: events.at(-1)?.bpm ?? 120,
+            bpm: latestBpm,
             timeSignature: currentTimeSignature,
           });
         }
